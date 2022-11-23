@@ -2,7 +2,6 @@
 
 require_once "product.php";
 require_once "cart.php";
-require_once "cartItem.php";
 
 $product1 = new Product(1, "iPhone 11", 2500, 10);
 $product2 = new Product(2, "M2 SSD", 400, 10);

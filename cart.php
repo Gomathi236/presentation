@@ -1,10 +1,44 @@
 <?php
 
+require_once('product.php');
 
 class Cart
 {
     
     private  $items = [];
+    private  $product;
+    private  $quantity;
+
+   
+    public function __construct($product=null, $quantity=null)
+    {
+        $this->product = $product;
+        $this->quantity = $quantity;
+    }
+
+   
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+   
+    public function setProduct($product)
+    {
+        $this->product = $product;
+    }
+
+    
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
 
     public function getItems()
     {
@@ -19,13 +53,13 @@ class Cart
     public function addProduct( $product, $quantity)
     {
         // find product in cart
-        $cartItem = $this->findCartItem($product->getId());
-        if ($cartItem === null){
-            $cartItem = new CartItem($product, 0);
-            $this->items[$product->getId()] = $cartItem;
+        $cart = $this->findCartItem($product->getId());
+        if ($cart === null){
+            $cart = new Cart($product, 0);
+            $this->items[$product->getId()] = $cart;
         }
-        $cartItem->increaseQuantity($quantity);
-        return $cartItem;
+        $cart->increaseQuantity($quantity);
+        return $cart;
     }
 
     private function findCartItem($productId)
@@ -36,6 +70,23 @@ class Cart
     public function removeProduct( $product)
     {
         unset($this->items[$product->getId()]);
+    }
+
+    public function increaseQuantity($amount = 1)
+    {
+        if ($this->getQuantity() + $amount > $this->getProduct()->getAvailableQuantity()){
+            throw new Exception("Product quantity can not be more than ".$this->getProduct()->getAvailableQuantity());
+        }
+        $this->quantity += $amount;
+        
+    }
+
+    public function decreaseQuantity($amount = 1)
+    {
+        if ($this->getQuantity() - $amount < 1){
+            throw new Exception("Product quantity can not be less than 1");
+        }
+        $this->quantity -= $amount;
     }
 
     
